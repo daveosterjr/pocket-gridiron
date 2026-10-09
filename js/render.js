@@ -168,11 +168,14 @@
     ['S'], ['CB1', 'LB1', 'LB2', 'CB2'], ['DL1', 'DL2'], null, ['WR1', 'OL1', 'OL2', 'TE', 'WR2'], ['QB'], ['RB', 'K'],
   ];
   PG.CARD_ROWS = CARD_ROWS;
+  // The two base stats that matter most at each position, shown on the share card.
+  const KEY_STATS = { QB: ['spa', 'spd'], RB: ['spe', 'atk'], WR: ['spe', 'spd'], TE: ['atk', 'hp'], OL: ['def', 'hp'], DL: ['atk', 'spe'], LB: ['atk', 'def'], CB: ['spe', 'spd'], S: ['spd', 'spe'], K: ['spa', 'atk'] };
+  const STAT_LABEL = { hp: 'HP', atk: 'ATK', def: 'DEF', spa: 'SP.ATK', spd: 'SP.DEF', spe: 'SPEED' };
   PG.grade = function (ovr) {
     return ovr >= 86 ? 'S' : ovr >= 82 ? 'A+' : ovr >= 79 ? 'A' : ovr >= 76 ? 'B+' : ovr >= 73 ? 'B' : ovr >= 70 ? 'C+' : ovr >= 66 ? 'C' : 'D';
   };
   PG.drawLineupCard = function (sq, url) {
-    const cv = document.createElement('canvas'), Wc = 1080, Hc = 1350;
+    const cv = document.createElement('canvas'), Wc = 1080, Hc = 1500;
     cv.width = Wc; cv.height = Hc;
     const c = cv.getContext('2d');
     c.fillStyle = '#10131f'; c.fillRect(0, 0, Wc, Hc);
@@ -210,10 +213,11 @@
         c.strokeStyle = sq.color; c.lineWidth = 6; c.stroke();
         if (m) c.drawImage(PG.sprite(m), x - 54, y - 64, 108, 108);
         // Name plate.
-        c.fillStyle = 'rgba(12,14,24,.88)'; c.beginPath(); c.roundRect(x - 92, y + 42, 184, 52, 10); c.fill();
+        c.fillStyle = 'rgba(12,14,24,.88)'; c.beginPath(); c.roundRect(x - 96, y + 42, 192, 76, 10); c.fill();
         c.fillStyle = '#fff'; c.textAlign = 'center'; c.font = '800 23px system-ui, sans-serif'; c.fillText(m ? m.name : 'Empty', x, y + 58, 172);
         c.font = '700 18px system-ui, sans-serif'; c.fillStyle = '#aab3d0';
         c.fillText(m ? `${slot.pos}  ·  ${PG.rating(m, slot.pos)} OVR` : slot.pos, x, y + 80);
+        if (m) { c.font = '700 16px system-ui, sans-serif'; c.fillStyle = '#ffd84a'; c.fillText(KEY_STATS[slot.pos].map((k) => `${STAT_LABEL[k]} ${m[k]}`).join('  '), x, y + 103, 184); }
         if (m) { // rating badge
           const r = PG.rating(m, slot.pos);
           c.fillStyle = r >= 85 ? '#ffd84a' : r >= 75 ? '#7be08a' : r >= 65 ? '#e8ecf8' : '#f0a070';
